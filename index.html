@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Helder Biottulfe - 77750</title>
+
+<style>
+
+*{
+box-sizing:border-box;
+margin:0;
+padding:0;
+}
+
+body{
+min-height:100vh;
+display:grid;
+place-items:center;
+font-family:"Segoe UI",Arial,sans-serif;
+transition:0.3s;
+}
+
+/* LIGHT MODE */
+
+body.light{
+background:linear-gradient(135deg,#dbeafe,#eff6ff,#e0f2fe);
+color:#0f172a;
+}
+
+/* DARK MODE */
+
+body.dark{
+background:linear-gradient(135deg,#0f172a,#1e293b,#020617);
+color:white;
+}
+
+/* GLASS CARD */
+
+.card{
+width:min(420px,100%);
+padding:35px 25px;
+border-radius:25px;
+text-align:center;
+backdrop-filter:blur(12px);
+background:rgba(255,255,255,0.25);
+box-shadow:0 20px 45px rgba(0,0,0,0.2);
+}
+
+body.dark .card{
+background:rgba(0,0,0,0.35);
+}
+
+h1{
+margin-bottom:10px;
+}
+
+#boxCounter{
+font-size:4.5rem;
+font-weight:800;
+margin:15px 0;
+transition:transform 0.2s ease,color 0.2s ease;
+}
+
+.counter-pop{
+transform:scale(1.15);
+}
+
+.status{
+margin-bottom:20px;
+font-size:0.9rem;
+opacity:0.8;
+}
+
+/* BUTTON GRID */
+
+#container-button{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:10px;
+margin-top:10px;
+}
+
+button{
+border:none;
+border-radius:12px;
+padding:14px;
+font-weight:700;
+cursor:pointer;
+transition:0.2s;
+}
+
+button:hover{
+transform:translateY(-2px);
+}
+
+#btn-decrement{
+background:#fecaca;
+}
+
+#btn-reset{
+background:#e2e8f0;
+}
+
+#btn-increment{
+background:#38bdf8;
+color:white;
+}
+
+/* DARK MODE BUTTON */
+
+.toggle{
+margin-top:20px;
+background:#6366f1;
+color:white;
+padding:10px 16px;
+border-radius:12px;
+}
+
+@media(max-width:480px){
+
+#container-button{
+grid-template-columns:1fr;
+}
+
+#boxCounter{
+font-size:3.5rem;
+}
+
+}
+
+</style>
+</head>
+
+<body class="light">
+
+<main class="card">
+
+<h1>Counter</h1>
+
+<div id="boxCounter">0</div>
+<div id="statusMessage" class="status">Press a button to start</div>
+
+<div id="container-button">
+<button id="btn-decrement">Decrement</button>
+<button id="btn-reset">Reset</button>
+<button id="btn-increment">Increment</button>
+</div>
+
+<button class="toggle" id="modeToggle">Toggle Dark Mode</button>
+
+</main>
+
+<script>
+
+const boxCounter=document.getElementById("boxCounter");
+const btnContainer=document.getElementById("container-button");
+const statusMessage=document.getElementById("statusMessage");
+const modeToggle=document.getElementById("modeToggle");
+
+const MIN=-10;
+const MAX=10;
+
+/* LOAD COUNTER */
+
+let counterValue=localStorage.getItem("counterValue");
+
+counterValue=counterValue!==null?parseInt(counterValue):0;
+
+boxCounter.innerText=counterValue;
+
+updateCounterColor(counterValue);
+
+/* LOAD MODE */
+
+const savedMode=localStorage.getItem("mode");
+
+if(savedMode){
+document.body.className=savedMode;
+}
+
+/* COLOR FUNCTION */
+
+function updateCounterColor(value){
+
+if(value>0){
+boxCounter.style.color="#22c55e";
+statusMessage.textContent="Counter is positive";
+}
+
+else if(value<0){
+boxCounter.style.color="#ef4444";
+statusMessage.textContent="Counter is negative";
+}
+
+else{
+boxCounter.style.color="#0ea5e9";
+statusMessage.textContent="Counter is zero";
+}
+
+}
+
+/* BUTTON EVENTS */
+
+btnContainer.addEventListener("click",(event)=>{
+
+const id=event.target.id;
+
+if(id==="btn-increment" && counterValue<MAX){
+counterValue++;
+}
+
+else if(id==="btn-decrement" && counterValue>MIN){
+counterValue--;
+}
+
+else if(id==="btn-reset"){
+counterValue=0;
+}
+
+updateDisplay();
+
+});
+
+
+
+document.addEventListener("keydown",(event)=>{
+
+if(event.key==="ArrowUp" && counterValue<MAX){
+counterValue++;
+}
+
+else if(event.key==="ArrowDown" && counterValue>MIN){
+counterValue--;
+}
+
+else if(event.key.toLowerCase()==="r"){
+counterValue=0;
+}
+
+updateDisplay();
+
+});
+
+
+
+function updateDisplay(){
+
+boxCounter.innerText=counterValue;
+
+updateCounterColor(counterValue);
+
+boxCounter.classList.add("counter-pop");
+
+setTimeout(()=>{
+boxCounter.classList.remove("counter-pop");
+},150);
+
+localStorage.setItem("counterValue",counterValue);
+
+}
+
+/* DARK MODE TOGGLE BUTTON */
+
+modeToggle.addEventListener("click",()=>{
+
+if(document.body.classList.contains("light")){
+document.body.classList.remove("light");
+document.body.classList.add("dark");
+localStorage.setItem("mode","dark");
+}
+
+else{
+document.body.classList.remove("dark");
+document.body.classList.add("light");
+localStorage.setItem("mode","light");
+}
+
+});
+
+</script>
+
+</body>
+</html>
